@@ -1,7 +1,9 @@
 @echo off
 cd C:\Windows\system32\inetsrv\
-echo Batch Script to take input.
-set /p input= Enter App Pool Name: 
+:programTop
+set "input="
+set /p input= Enter App Pool Name or "List": 
+IF /i "%input%"=="List" goto listAllAppPool
 :programStart
 echo Site: %input%
 set "select="
@@ -18,6 +20,7 @@ goto programStart
 
 :startAppPool
 appcmd start apppool /apppool.name:"%input%"
+curl localhost/%input%
 goto programStart
 
 :stopAppPool
@@ -25,12 +28,18 @@ appcmd stop apppool /apppool.name:"%input%"
 goto programStart
 
 :killWP
-appcmd list wp
+set pid= 
+for /f "delims=" %%a in ('appcmd list wp /apppool.name:"coupa-local" /text:wp.name') do @set pid=%%a
+taskkill /pid %pid% /t /f
 goto programStart
 
 :listWP
-appcmd list wp
+appcmd list wp /apppool.name:"%input%"
 goto programStart
+
+:listAllAppPool
+appcmd list apppool
+goto programTop
 
 :exitProgram
 pause
