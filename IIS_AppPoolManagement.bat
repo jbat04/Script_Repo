@@ -29,7 +29,7 @@ goto programStart
 
 :killWP
 set pid= 
-for /f "delims=" %%a in ('appcmd list wp /apppool.name:"coupa-local" /text:wp.name') do @set pid=%%a
+for /f "delims=" %%a in ('appcmd list wp /apppool.name:"%input%" /text:wp.name') do @set pid=%%a
 taskkill /pid %pid% /t /f
 goto programStart
 
